@@ -4,6 +4,62 @@
 by executing the move from Dock's process context instead of from an ordinary
 client process.
 
+## TL;DR
+
+If you just want it working, do this:
+
+1. Install it:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/KonradStanski/dockmove/main/install.sh | sh
+```
+
+2. Boot into Recovery, open `Utilities > Terminal`, and run:
+
+```sh
+csrutil enable --without fs --without debug --without nvram
+```
+
+3. Reboot normally, then run:
+
+```sh
+sudo nvram boot-args=-arm64e_preview_abi
+```
+
+4. Reboot again.
+
+5. In `System Settings > Desktop & Dock > Mission Control`, set:
+
+- `Displays have separate Spaces` = `On`
+- `Automatically rearrange Spaces based on most recent use` = `Off`
+
+6. Inject the payload into Dock:
+
+```sh
+sudo dockmove inject
+```
+
+7. Find your target window and space:
+
+```sh
+dockmove list-windows
+dockmove list-spaces
+```
+
+8. Move the window:
+
+```sh
+dockmove move-window --window-id 12345 --space-id 17
+```
+
+Or by per-display user-space index:
+
+```sh
+dockmove move-window --window-id 12345 --space-index 3
+```
+
+If Dock restarts, run `sudo dockmove inject` again.
+
 ## Why this exists
 
 The older client-side move calls such as `CGSMoveWindowsToManagedSpace` and
@@ -29,8 +85,6 @@ Unix socket.
 - no Accessibility dependency for the current command surface
 
 ## Quick install
-
-From a published repo:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/KonradStanski/dockmove/main/install.sh | sh
